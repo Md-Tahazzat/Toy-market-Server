@@ -1,17 +1,21 @@
-const express = require("express");
-require("dotenv").config();
-const cors = require("cors");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+// const corsConfig = {
+//   origin: "",
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 // middleware
 app.use(cors());
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Server is running");
-});
+// app.use(cors(corsConfig));
+// app.options("", cors(corsConfig));
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.v7xfdwv.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -26,20 +30,23 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-
     const toyCollection = client.db("AllToys").collection("Toys");
+    const ChildData = client.db("ChildData").collection("Data");
 
     // Get all Toys
     app.get("/toys", async (req, res) => {
       try {
         const result = await toyCollection.find({}).toArray();
+        res.send(result);
+      } catch (error) {
+        res.send({ error: error?.message });
+      }
+    });
+
+    // Get all child Data
+    app.get("/childData", async (req, res) => {
+      try {
+        const result = await ChildData.find({}).toArray();
         res.send(result);
       } catch (error) {
         res.send({ error: error?.message });
@@ -52,6 +59,10 @@ async function run() {
 }
 run().catch(console.dir);
 
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
 app.listen(port, () => {
-  console.log("Toy server is running on port 4000");
+  console.log("Toy server is running on port 5000");
 });
