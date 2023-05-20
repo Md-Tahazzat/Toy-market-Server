@@ -59,7 +59,7 @@ async function run() {
     // Get all added toys
     app.get("/addedToys", async (req, res) => {
       try {
-        const result = await addedToyCollection.find().toArray();
+        const result = await addedToyCollection.find().limit(20).toArray();
         res.send(result);
       } catch (error) {
         res.send({ error });
