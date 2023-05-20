@@ -89,6 +89,38 @@ async function run() {
       }
     });
 
+    // Update a toy
+    app.put("/update/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedData = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+
+        console.log({ ...updatedData });
+        const toy = {
+          $set: {
+            ...updatedData,
+          },
+        };
+        const result = await addedToyCollection.updateOne(filter, toy, options);
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
+    // Delete a toy from addedToyCollection
+    app.delete("/delete/:id", async (req, res) => {
+      try {
+        const filter = { _id: new ObjectId(req.params.id) };
+        const result = await addedToyCollection.deleteOne(filter);
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
     // Get all child Data
     app.get("/childData", async (req, res) => {
       try {
