@@ -31,7 +31,8 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const toyCollection = client.db("AllToys").collection("Toys");
-    const ChildData = client.db("ChildData").collection("Data");
+    const childData = client.db("ChildData").collection("Data");
+    const addedToyCollection = client.db("AllAddedToys").collection("Toys");
 
     // Get all Toys
     app.get("/toys", async (req, res) => {
@@ -55,10 +56,20 @@ async function run() {
       }
     });
 
+    // Get all added toys
+    app.get("/addedToys", async (req, res) => {
+      try {
+        const result = await addedToyCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
     // Get all child Data
     app.get("/childData", async (req, res) => {
       try {
-        const result = await ChildData.find({}).toArray();
+        const result = await childData.find({}).toArray();
         res.send(result);
       } catch (error) {
         res.send({ error: error?.message });
