@@ -78,6 +78,17 @@ async function run() {
       }
     });
 
+    // Post a toy to allAddedToys
+    app.post("/addedToys/new", async (req, res) => {
+      try {
+        const toy = req.body;
+        const result = await addedToyCollection.insertOne(toy);
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
     // Get all child Data
     app.get("/childData", async (req, res) => {
       try {
