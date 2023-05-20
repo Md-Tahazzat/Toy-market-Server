@@ -78,6 +78,23 @@ async function run() {
       }
     });
 
+    // Get toys by email from allAddedToys
+    app.get("/allAddedToys", async (req, res) => {
+      try {
+        const email = req.query.email;
+        const sortingMethods = req.query.sort == "ascending" ? 1 : -1;
+        const filter = { sellerEmail: email };
+
+        const result = await addedToyCollection
+          .find(filter)
+          .sort({ price: sortingMethods })
+          .toArray();
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
     // Post a toy to allAddedToys
     app.post("/addedToys/new", async (req, res) => {
       try {
@@ -90,7 +107,7 @@ async function run() {
     });
 
     // Update a toy
-    app.put("/update/:id", async (req, res) => {
+    app.put("/updateToy/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const updatedData = req.body;
