@@ -66,6 +66,18 @@ async function run() {
       }
     });
 
+    // Get a toy from allAddedToys
+    app.get("/addedToys/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const result = await addedToyCollection.findOne(filter);
+        res.send(result);
+      } catch (error) {
+        res.send({ error });
+      }
+    });
+
     // Get all child Data
     app.get("/childData", async (req, res) => {
       try {
